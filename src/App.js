@@ -1,24 +1,52 @@
-import React from 'react';
-import logo from './logo.svg';
+import React,{useState,useEffect} from 'react';
 import './App.css';
+import Papa from 'papaparse'
+// import csvdb from 'csv-database'
 
-function App() {
+const App=() => {
+  // const csvHeaders=[
+  //   'unique_mos_id',	
+  //   'first_name',	
+  //   'last_name',	
+  //   'command_now',	
+  //   'complaint_id',	
+  //   'month_received',	
+  //   'year_received',	
+  //   'month_closed',	
+  //   'year_closed',	
+  //   'command_at_incident',	
+  //   'rank_abbrev_incident',	
+  //   'rank_abbrev_now',	
+  //   'rank_now',	
+  //   'rank_incident',	
+  //   'mos_ethnicity',	
+  //   'mos_gender',	
+  //   'mos_age_incident',	
+  //   'complainant_ethnicity',	
+  //   'complainant_gender',	
+  //   'complainant_age_incident',	
+  //   'fado_type',	
+  //   'allegation',	
+  //   'precinct',	
+  //   'contact_reason',	
+  //   'outcome_description',
+  //   'board_disposition',
+  // ]
+
+const [data,setData] = useState(null)
+useEffect(()=>{
+  const pathToCsv=require('./propublica_ccrb.csv')
+  Papa.parse(pathToCsv,{
+    header: true,
+    download: true,
+    skipEmptyLines: true,
+    complete: (result)=>setData(result.data)
+  })
+},[])
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>ayoo</h1>
+      {console.log(data)}
     </div>
   );
 }
