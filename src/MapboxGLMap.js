@@ -13,12 +13,12 @@ const MapboxGLMap = ()=>{
     const mapContainer = useRef(null)
     const [map, setMap] = useState(null);
     const [mapState,setMapState]=useState({
-        lng: 0,
-        lat: 0,
-        zoom: 2
+        lng: -74,
+        lat: 40.72,
+        zoom: 10.3
     })
     useEffect(()=>{
-        mapboxgl.accessToken = process.env.MAPBOX_ACCESS_TOKEN
+        mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN
         const initializeMap=({setMap,mapContainer})=>{
             const map = (new mapboxgl.Map(
                 {
