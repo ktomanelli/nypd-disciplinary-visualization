@@ -28,9 +28,25 @@ const MapboxGLMap = ()=>{
                     zoom: mapState.zoom
                 }
             ))
+
             map.on("load", () => {
+                const layers = map.getStyle().layers
                 setMap(map);
                 map.resize();
+                map.addSource('police-precincts',{
+                    type:'geojson',
+                    data:require('./PolicePrecincts.geojson')
+                })
+                map.addLayer({
+                    id:'police-precincts-fill',
+                    'type': 'fill',
+                    'source': 'police-precincts',
+                    'layout': {},
+                    'paint': {
+                        'fill-color': '#f08',
+                        'fill-opacity': 0.4
+                    }
+                })
             });
         }
           if (!map) initializeMap({ setMap, mapContainer });
