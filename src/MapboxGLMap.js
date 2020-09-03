@@ -1,5 +1,7 @@
 import React,{useState,useEffect,useRef} from 'react'
 import mapboxgl from 'mapbox-gl';
+import PolicePrecincts from './PolicePrecincts.json'
+
 import "mapbox-gl/dist/mapbox-gl.css";
 require('dotenv').config()
 
@@ -9,7 +11,8 @@ const styles = {
   position: "absolute"
 };
 
-const MapboxGLMap = ()=>{
+const MapboxGLMap = (props)=>{
+
     const mapContainer = useRef(null)
     const [map, setMap] = useState(null);
     const [mapState,setMapState]=useState({
@@ -33,25 +36,38 @@ const MapboxGLMap = ()=>{
                 const layers = map.getStyle().layers
                 setMap(map);
                 map.resize();
-                map.addSource('police-precincts',{
-                    type:'geojson',
-                    data:require('./PolicePrecincts.geojson')
-                })
-                map.addLayer({
-                    id:'police-precincts-fill',
-                    'type': 'fill',
-                    'source': 'police-precincts',
-                    'layout': {},
-                    'paint': {
-                        'fill-color': '#f08',
-                        'fill-opacity': 0.4
-                    }
+                PolicePrecincts.features.forEach(precinct=>{
+                    // console.log(precinct)
+                    const id = precinct.properties.precinct
+                    map.addSource(`precinct-${id}`,{
+                        type:'geojson',
+                        data:precinct
+                    })
+                    map.addLayer({
+
+                        //use ramp for style thing in here,
+                        //only use 1 source/layer
+                        id:`precincts-fill-${id}`,
+                        'type': 'fill',
+                        'source': `precinct-${id}`,
+                        'layout': {},
+                        'paint': {
+                            'fill-color': getFillColor(id),
+                            'fill-opacity': 0.4
+                        }
+                    })
                 })
             });
         }
           if (!map) initializeMap({ setMap, mapContainer });
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[map])
+
+    const getFillColor=(id)=>{
+    
+        return '#ff3'
+    }
+
 
     return(
         <div ref={el=>mapContainer.current=el} style={styles} />
