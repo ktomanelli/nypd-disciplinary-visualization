@@ -12,7 +12,9 @@ const styles = {
 };
 
 const MapboxGLMap = (props)=>{
-
+    const r = 0
+    const g = 128
+    const b = 255
     const mapContainer = useRef(null)
     const [map, setMap] = useState(null);
     const [mapState,setMapState]=useState({
@@ -20,6 +22,24 @@ const MapboxGLMap = (props)=>{
         lat: 40.72,
         zoom: 10.3
     })
+
+    function componentToHex(c) {
+        var hex = c.toString(16);
+        return hex.length == 1 ? "0" + hex : hex;
+    }
+      
+    function rgbToHex(r, g, b) {
+        return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+    }
+    const getColors=(max)=>{
+        const arr=[]
+        for(let i=0;i<=max;i+=100){
+            arr.push([i,rgbToHex(parseInt(i/100 * r/10), parseInt(i/100 * g/10), parseInt(i/100 * b/10))])
+        }
+        console.log(arr)
+        return arr
+    }
+
     useEffect(()=>{
         props.data.forEach(complaint=>{
             const precinct = complaint.precinct
@@ -67,20 +87,7 @@ const MapboxGLMap = (props)=>{
                         'paint': {
                             'fill-color': {
                                 property: 'complaints',
-                                stops: [
-                                    [0, '#E8E3E3'],
-                                    [100, '#EDDEDE'],
-                                    [200, '#FAD1D1'],
-                                    [300, '#FFCCCC'],
-                                    [400, '#F0A8A8'],
-                                    [500, '#FF9999'],
-                                    [600, '#FF6666'],
-                                    [700, '#FF3333'],
-                                    [800, '#FF0000'],
-                                    [900, '#CC0000'],
-                                    [1000, '#990000'],
-                                    [1100, '#660000'],
-                                  ]
+                                stops: getColors(1000)
                             },
                             'fill-opacity': 0.6
                         }
