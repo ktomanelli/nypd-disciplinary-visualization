@@ -21,6 +21,24 @@ const MapboxGLMap = (props)=>{
         zoom: 10.3
     })
     useEffect(()=>{
+        props.data.forEach(complaint=>{
+            const precinct = complaint.precinct
+            const increment = PolicePrecincts.features.find(precinctArea=>{
+                if(precinctArea.properties.precinct===precinct){
+
+                    return true}
+            })
+            if(increment){
+                if(increment.properties.complaints){
+                    increment.properties.complaints+=1
+                }else{
+                    increment.properties.complaints=1
+                }
+            }
+        })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[])
+    useEffect(()=>{
         mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN
         const initializeMap=({setMap,mapContainer})=>{
             const map = (new mapboxgl.Map(
@@ -36,38 +54,42 @@ const MapboxGLMap = (props)=>{
                 const layers = map.getStyle().layers
                 setMap(map);
                 map.resize();
-                PolicePrecincts.features.forEach(precinct=>{
                     // console.log(precinct)
-                    const id = precinct.properties.precinct
-                    map.addSource(`precinct-${id}`,{
+                    map.addSource(`precincts`,{
                         type:'geojson',
-                        data:precinct
+                        data:PolicePrecincts
                     })
                     map.addLayer({
-
-                        //use ramp for style thing in here,
-                        //only use 1 source/layer
-                        id:`precincts-fill-${id}`,
+                        id:`precincts-fill`,
                         'type': 'fill',
-                        'source': `precinct-${id}`,
+                        'source': `precincts`,
                         'layout': {},
                         'paint': {
-                            'fill-color': getFillColor(id),
-                            'fill-opacity': 0.4
+                            'fill-color': {
+                                property: 'complaints',
+                                stops: [
+                                    [0, '#E8E3E3'],
+                                    [100, '#EDDEDE'],
+                                    [200, '#FAD1D1'],
+                                    [300, '#FFCCCC'],
+                                    [400, '#F0A8A8'],
+                                    [500, '#FF9999'],
+                                    [600, '#FF6666'],
+                                    [700, '#FF3333'],
+                                    [800, '#FF0000'],
+                                    [900, '#CC0000'],
+                                    [1000, '#990000'],
+                                    [1100, '#660000'],
+                                  ]
+                            },
+                            'fill-opacity': 0.6
                         }
                     })
-                })
             });
         }
           if (!map) initializeMap({ setMap, mapContainer });
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[map])
-
-    const getFillColor=(id)=>{
-    
-        return '#ff3'
-    }
-
 
     return(
         <div ref={el=>mapContainer.current=el} style={styles} />
